@@ -23,9 +23,9 @@ const swaggerOptions = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'API для обліку внутрішніх витрат',
+      title: 'API for internal cost accounting',
       version: '1.0.0',
-      description: 'Документація REST API для фінального проєкту',
+      description: 'REST API documentation for the final project',
     },
     servers: [
       {
@@ -34,20 +34,19 @@ const swaggerOptions = {
       },
     ],
   },
-  // Шлях до файлів, де знаходяться анотації Swagger
+  // Path to the API docs
   apis: ['./routes/*.js'],
 };
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
 
-// Middleware для Swagger UI
+// Middleware for serving Swagger UI
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.get("/", (req, res) => {
   res.json({ message: "Сервер запущено!" });
 });
 
-// Всі запити, що починаються з /api/departments, будуть оброблятися в departmentRouter
 app.use("/api/departments", departmentRouter);
 app.use("/api/expense-types", expenseTypeRouter);
 app.use("/api/employees", employeeRouter);
@@ -61,7 +60,7 @@ const startServer = async () => {
     await mongoose.connect(DB_HOST);
     console.log("Database connection successful");
     app.listen(PORT, () => {
-      console.log(`Сервер працює на порті ${PORT}...`);
+      console.log(`Server is listening on ${PORT}...`);
     });
   } catch (error) {
     console.log(error.message);

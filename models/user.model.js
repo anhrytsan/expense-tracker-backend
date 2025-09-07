@@ -6,14 +6,14 @@ const userSchema = new Schema(
     email: {
       type: String,
       required: [true, 'Email є обовʼязковим'],
-      unique: true, // Кожен email має бути унікальним
+      unique: true,
       trim: true,
-      lowercase: true, // Завжди зберігаємо email в нижньому регістрі
+      lowercase: true, // Always store email in lowercase
     },
     password: {
       type: String,
       required: [true, 'Пароль є обовʼязковим'],
-      minlength: 6, // Мінімальна довжина пароля
+      minlength: 6,
     },
   },
   {
@@ -21,16 +21,16 @@ const userSchema = new Schema(
     timestamps: true,
   }
 );
-// Middleware, яка виконується ПЕРЕД збереженням
+// Middleware to hash password before saving
 userSchema.pre('save', async function (next) {
-  // Якщо пароль не було змінено, нічого не робимо
+  // If password is not modified, skip hashing
   if (!this.isModified('password')) {
     return next();
   }
 
-  // "Солимо" пароль, щоб зробити його ще безпечнішим
+  // Salt and hash the password
   const salt = await bcrypt.genSalt(10);
-  // Хешуємо пароль з використанням "солі"
+  // Hash the password
   this.password = await bcrypt.hash(this.password, salt);
 
   next();

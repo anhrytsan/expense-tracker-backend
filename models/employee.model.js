@@ -12,10 +12,10 @@ const employeeSchema = new Schema(
       required: [true, "Посада є обовʼязковою"],
       trim: true,
     },
-    // Ось і наш зв'язок!
+    // Link to the Department model
     department: {
       type: Schema.Types.ObjectId,
-      ref: "department", // Вказуємо, що це посилання на модель 'department'
+      ref: "department",
       required: true,
     },
   },
@@ -25,9 +25,7 @@ const employeeSchema = new Schema(
   }
 );
 
-// --- НОВИЙ БЛОК: Додаємо комбінований індекс ---
-// Це гарантує, що не може існувати двох записів
-// з однаковим ім'ям, посадою та відділом.
+// Adding a compound index to ensure uniqueness of name, position, and department
 employeeSchema.index({ name: 1, position: 1, department: 1 }, { unique: true });
 
 const Employee = model("employee", employeeSchema);

@@ -2,14 +2,14 @@ import jwt from 'jsonwebtoken';
 import 'dotenv/config';
 
 export const authMiddleware = (req, res, next) => {
-  // 1. Перевіряємо, чи є заголовок Authorization
+  // 1. Check if the Authorization header is present
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
     return res.status(401).json({ message: 'Not authorized' });
   }
 
-  // 2. Розділяємо заголовок на "Bearer" і сам токен
+  // 2. Split the header to get the token
   const [bearer, token] = authHeader.split(' ');
 
   if (bearer !== 'Bearer' || !token) {
@@ -17,11 +17,11 @@ export const authMiddleware = (req, res, next) => {
   }
 
   try {
-    // 3. Перевіряємо токен за допомогою нашого секретного ключа
+    // 3. Check and verify the token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    // Додаємо розшифровану інформацію (ID користувача) до об'єкта запиту
+    // Add decoded user info to request object
     req.user = decoded;
-    // 4. Якщо все добре, передаємо управління наступній функції
+    // 4. If valid, proceed to the next middleware or route handler
     next();
   } catch (error) {
     return res.status(401).json({ message: 'Invalid token' });

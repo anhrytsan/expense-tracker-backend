@@ -85,7 +85,6 @@ export const getDepartmentAvailableFunds = async (req, res) => {
 
 export const createDepartment = async (req, res) => {
   try {
-    // req.body містить дані, які прийшли від клієнта (наприклад, з форми)
     const { name } = req.body;
 
     if (!name) {
@@ -95,12 +94,9 @@ export const createDepartment = async (req, res) => {
     const newDepartment = await Department.create({ name });
     res.status(201).json(newDepartment);
   } catch (error) {
-    // Перевіряємо, чи це помилка дублювання
     if (error.code === 11000) {
-      // Якщо так, відправляємо зрозуміле повідомлення і статус 409 Conflict
       return res.status(409).json({ message: `Відділ з назвою "${req.body.name}" вже існує.` });
     }
-    // Якщо спрацює `unique: true` в моделі, буде помилка
     res.status(400).json({ message: error.message });
   }
 };
@@ -117,7 +113,7 @@ export const updateDepartment = async (req, res) => {
     const updatedDepartment = await Department.findByIdAndUpdate(
       id,
       { name },
-      { new: true, runValidators: true } // new: true - щоб повернути оновлений документ
+      { new: true, runValidators: true } // new: true - to return the updated document
     );
 
     if (!updatedDepartment) {
@@ -136,7 +132,7 @@ export const deleteDepartment = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // 2. Пряма перевірка на наявність співробітників
+    // Check if there are employees in the department
     const employeeCount = await Employee.countDocuments({ department: id });
     if (employeeCount > 0) {
       return res.status(409).json({
@@ -144,14 +140,13 @@ export const deleteDepartment = async (req, res) => {
       });
     }
 
-    // Якщо співробітників немає, видаляємо
     const deletedDepartment = await Department.findByIdAndDelete(id);
 
     if (!deletedDepartment) {
       return res.status(404).json({ message: "Відділ не знайдено" });
     }
 
-    res.status(204).send(); // 204 No Content - успішне видалення без тіла відповіді
+    res.status(204).send(); // 204 No Content - successful deletion with no content
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

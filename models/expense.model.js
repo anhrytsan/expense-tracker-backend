@@ -12,20 +12,20 @@ const expenseSchema = new Schema(
       required: [true, "Дата є обовʼязковою"],
       default: Date.now,
     },
-    // --- Зв'язки ---
+
     expenseType: {
       type: Schema.Types.ObjectId,
-      ref: "expenseType", // Посилання на модель ExpenseType
+      ref: "expenseType",
       required: true,
     },
     employee: {
       type: Schema.Types.ObjectId,
-      ref: "employee", // Посилання на модель Employee
+      ref: "employee",
       required: true,
     },
     department: {
       type: Schema.Types.ObjectId,
-      ref: "department", // Посилання на модель Department
+      ref: "department",
       required: true,
     },
   },

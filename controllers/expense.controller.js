@@ -4,8 +4,7 @@ import MonthlyLimit from "../models/monthlyLimit.model.js";
 import ExpenseType from "../models/expenseType.model.js";
 import Employee from "../models/employee.model.js"; // <-- Додай цей імпорт
 
-
-// Ефективний ліміт = (Ліміт поточного місяця) + (Усі невитрачені гроші з усіх попередніх місяців).
+// Effective Limit = (Current Month's Limit) + (All Unspent Money from All Previous Months).
 export const createExpense = async (req, res) => {
   try {
     const { amount, date, expenseType, employee, department } = req.body;
@@ -24,26 +23,26 @@ export const createExpense = async (req, res) => {
       });
     }
 
-    // 1. Визначаємо рік та місяць для нової витрати
+    // Define the month and year of the expense
     const expenseDate = date ? new Date(date) : new Date();
     const year = expenseDate.getFullYear();
     const month = expenseDate.getMonth() + 1;
 
-    // --- НОВИЙ БЛОК: РОЗРАХУНОК ЗАЛИШКІВ З МИНУЛИХ ПЕРІОДІВ ---
+    // CALCULATE CARRYOVER FROM PREVIOUS MONTHS
     const previousLimitsData = await MonthlyLimit.aggregate([
-      // 1. Знайти всі ліміти для цього відділу, які були до поточної дати
+      // 1. Find  all previous limits for this department
       {
         $match: {
           department: mongoose.Types.ObjectId.createFromHexString(
             String(department)
-          ), // Важливо: конвертуємо ID в ObjectId
+          ), // Convert to ObjectId
           $or: [{ year: { $lt: year } }, { year: year, month: { $lt: month } }],
         },
       },
-      // 2. Згрупувати їх і порахувати загальний залишок
+      // 2. Group and sum up the unspent amounts
       {
         $group: {
-          _id: null, // Згрупувати всі документи в одну купу
+          _id: null, // Grouping key, null means we want a single result
           totalCarryover: {
             $sum: { $subtract: ["$limitAmount", "$spentAmount"] },
           },
@@ -51,11 +50,11 @@ export const createExpense = async (req, res) => {
       },
     ]);
 
-    // Якщо є дані з минулих періодів, беремо залишок, якщо ні - він 0
+    // If there's no previous data, carryover is 0
     const carryover =
       previousLimitsData.length > 0 ? previousLimitsData[0].totalCarryover : 0;
 
-    // 2. Знаходимо ліміт для цього відділу на цей місяць
+    // 2. Find the current month's limit for this department
     const currentLimit = await MonthlyLimit.findOne({
       department,
       year,
@@ -68,13 +67,13 @@ export const createExpense = async (req, res) => {
       });
     }
 
-    // Рахуємо ефективний ліміт
+    // Calculate the effective limit
     const effectiveLimit = currentLimit.limitAmount + carryover;
 
     const effectiveLimitExceeded =
       currentLimit.spentAmount + amount > effectiveLimit;
 
-    // 3. Перевіряємо, чи не буде перевищено ефективний ліміт
+    // 3. Check if adding this expense would exceed the effective limit
     if (effectiveLimitExceeded) {
       const remaining = effectiveLimit - currentLimit.spentAmount;
 
@@ -87,7 +86,7 @@ export const createExpense = async (req, res) => {
       });
     }
 
-    // 4. Якщо все гаразд, створюємо витрату
+    // 4. If all checks pass, create the expense
     const newExpense = await Expense.create({
       amount,
       date: expenseDate,
@@ -96,7 +95,7 @@ export const createExpense = async (req, res) => {
       department,
     });
 
-    // 5. Оновлюємо поле spentAmount у нашому ліміті
+    // 5. Update the spent amount in the MonthlyLimit
     currentLimit.spentAmount += amount;
     await currentLimit.save();
 

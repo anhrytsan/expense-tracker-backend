@@ -66,13 +66,11 @@ export const updateEmployee = async (req, res) => {
     const { id } = req.params;
     const { name, position, department } = req.body;
 
-    // --- ВИПРАВЛЕНА ПЕРЕВІРКА ---
-    // Шукаємо, чи існує інший співробітник з такими ж даними.
+    // Find if an employee with the same name, position, and department already exists (excluding the current employee)
     const existingEmployee = await Employee.findOne({
       name,
       position,
-      department: mongoose.Types.ObjectId.createFromHexString(department), // 2. Явно перетворюємо рядок в ObjectId
-      _id: { $ne: id },
+      department: mongoose.Types.ObjectId.createFromHexString(department), // Explicit conversion to ObjectId
     });
 
     if (existingEmployee) {

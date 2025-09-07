@@ -17,8 +17,7 @@ export const setMonthlyLimit = async (req, res) => {
       await existingLimit.save();
       return res.status(200).json(existingLimit);
     } else {
-      // --- НОВИЙ БЛОК: Розраховуємо вже витрачену суму ---
-      // 2. Рахуємо суму витрат за цей період
+      // Calculate spentAmount for the new limit
       const expensesInMonth = await Expense.aggregate([
         {
           $match: {
@@ -44,13 +43,13 @@ export const setMonthlyLimit = async (req, res) => {
       const spentAmount =
         expensesInMonth.length > 0 ? expensesInMonth[0].totalSpent : 0;
 
-      // 3. Створюємо новий ліміт з уже розрахованою сумою
+      // Create new limit with calculated spentAmount
       const newLimit = await MonthlyLimit.create({
         department,
         year,
         month,
         limitAmount,
-        spentAmount, // <-- Передаємо розраховану суму
+        spentAmount,
       });
       return res.status(201).json(newLimit);
     }
@@ -58,8 +57,6 @@ export const setMonthlyLimit = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
-
-// ... решта коду без змін ...
 
 export const getMonthlyLimits = async (req, res) => {
   try {

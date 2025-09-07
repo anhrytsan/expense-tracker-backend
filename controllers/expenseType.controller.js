@@ -30,7 +30,7 @@ export const updateExpenseType = async (req, res) => {
     const updatedExpenseType = await ExpenseType.findByIdAndUpdate(
       id,
       req.body,
-      { new: true } // Повертає оновлений документ
+      { new: true } // Return the updated document
     );
     if (!updatedExpenseType) {
       return res.status(404).json({ message: "Тип витрат не знайдено" });

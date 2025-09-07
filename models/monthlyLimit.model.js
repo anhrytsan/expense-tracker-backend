@@ -7,7 +7,6 @@ const monthlyLimitSchema = new Schema(
       ref: "department",
       required: true,
     },
-    // Зберігаємо рік та місяць для ідентифікації періоду
     year: {
       type: Number,
       required: true,
@@ -15,7 +14,7 @@ const monthlyLimitSchema = new Schema(
     month: {
       type: Number,
       required: true,
-      min: 1, // Місяці від 1 до 12
+      min: 1,
       max: 12,
     },
     limitAmount: {
@@ -36,8 +35,7 @@ const monthlyLimitSchema = new Schema(
   }
 );
 
-// Створюємо унікальний індекс, щоб не можна було створити
-// два однакових ліміти для одного відділу на той самий місяць
+// Compound index to ensure uniqueness of department, year, and month
 monthlyLimitSchema.index(
   { department: 1, year: 1, month: 1 },
   { unique: true }
