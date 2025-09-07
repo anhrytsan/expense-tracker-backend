@@ -42,7 +42,7 @@ Follow these steps to get the backend server running locally.
 
 1.  **Clone the repository:**
     ```bash
-    git clone <your-repository-url>
+    git clone https://github.com/anhrytsan/expense-tracker-backend.git
     ```
 2.  **Navigate to the backend directory:**
     ```bash
@@ -52,25 +52,6 @@ Follow these steps to get the backend server running locally.
     ```bash
     npm install
     ```
-
-### Environment Configuration
-
-The server requires a few environment variables to run correctly.
-
-1.  Create a `.env` file in the root of the `expense-tracker-backend` directory.
-2.  Add the following variables, replacing the placeholder values with your own:
-
-    ```env
-    # MongoDB Connection String
-    DB_HOST="mongodb+srv://<user>:<password>@<your-cluster-url>/<database-name>?retryWrites=true&w=majority"
-
-    # JWT Secret Key for signing tokens
-    JWT_SECRET="your_super_secret_jwt_key"
-
-    # Port for the server to run on
-    PORT=3000
-    ```
-    _You can use the provided `.env` file as a template._
 
 ### Running the Server
 
