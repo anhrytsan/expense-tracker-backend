@@ -6,6 +6,8 @@ This document provides instructions for setting up and running the backend serve
 
 This is a RESTful API built with Node.js, Express, and MongoDB. It serves as the backbone for the Expense Tracker frontend, handling all business logic, data storage, and user authentication.
 
+The frontend repository for this project can be found here: **[https://github.com/anhrytsan/expense-tracker-frontend](https://github.com/anhrytsan/expense-tracker-frontend)**
+
 ## ✨ Features
 
 * **RESTful API:** A well-structured API for managing all application resources:
@@ -19,6 +21,12 @@ This is a RESTful API built with Node.js, Express, and MongoDB. It serves as the
 * **Data Validation:** Server-side validation to ensure data integrity.
 * **MongoDB Integration:** Uses Mongoose for elegant and straightforward object data modeling (ODM).
 * **API Documentation:** Interactive API documentation powered by Swagger (OpenAPI).
+
+## 🟢 Live Demo
+
+The project is deployed and you can view a live demo here: **[https://expense-tracker-frontend-rho-nine.vercel.app/](https://expense-tracker-frontend-rho-nine.vercel.app/)**
+
+**Please note:** The frontend is deployed on **Vercel**, and the backend is on **Render** (free plan). This may cause a delay on the first request while the server wakes up.
 
 ## 🛠️ Tech Stack
 
